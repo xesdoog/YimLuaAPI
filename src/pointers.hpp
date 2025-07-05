@@ -52,6 +52,11 @@ namespace big
 
 		PVOID m_queue_dependency;
 		PVOID m_sig_scan_memory;
+
+		rage::Obf32** m_anticheat_initialized_hash;
+		PVOID m_get_anticheat_initialized_hash;
+		PVOID m_get_anticheat_initialized_hash_2;
+		CAnticheatContext** m_anticheat_context;
 	};
 
 	inline pointers* g_pointers{};

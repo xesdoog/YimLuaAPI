@@ -15,6 +15,7 @@
 #include "renderer/renderer_dx11.hpp"
 #include "renderer/renderer_dx12.hpp"
 #include "script_mgr.hpp"
+#include "security/ObfVar.hpp"
 #include "services/script_patcher/script_patcher_service.hpp"
 #include "thread_pool.hpp"
 #include "util/is_enhanced.hpp"
@@ -32,6 +33,24 @@
 
 namespace big
 {
+
+	static void nop_game_skeleton_element(rage::game_skeleton_update_element* element)
+	{
+		// TODO: small memory leak
+		// Hey rockstar if you keep up with this I'll make you integrity check everything until you can't anymore, please grow a brain and realize that this is futile
+		// and kills performance if you're the host
+		auto vtable = *reinterpret_cast<void***>(element);
+		if (vtable[1] == g_pointers->m_nullsub)
+		{
+			return; // already nopped
+		}
+
+		auto new_vtable = new void*[3];
+		memcpy(new_vtable, vtable, sizeof(void*) * 3);
+		new_vtable[1]                       = (void*)g_pointers->m_nullsub;
+		*reinterpret_cast<void***>(element) = new_vtable;
+	}
+
 	bool disable_anticheat_skeleton()
 	{
 		bool patched = false;
@@ -49,19 +68,10 @@ namespace big
 					if (group_child_node->m_hash != 0xA0F39FB6 && group_child_node->m_hash != RAGE_JOAAT("TamperActions"))
 						continue;
 					patched = true;
-					//LOG(INFO) << "Patching problematic skeleton update";
-					reinterpret_cast<rage::game_skeleton_update_element*>(group_child_node)->m_function = g_pointers->m_nullsub;
+					nop_game_skeleton_element(reinterpret_cast<rage::game_skeleton_update_element*>(group_child_node));
 				}
 				break;
 			}
-		}
-
-		for (rage::skeleton_data& i : g_pointers->m_game_skeleton->m_sys_data)
-		{
-			if (i.m_hash != 0xA0F39FB6 && i.m_hash != RAGE_JOAAT("TamperActions"))
-				continue;
-			i.m_init_func     = reinterpret_cast<uint64_t>(g_pointers->m_nullsub);
-			i.m_shutdown_func = reinterpret_cast<uint64_t>(g_pointers->m_nullsub);
 		}
 		return patched;
 	}
@@ -122,6 +132,16 @@ BOOL APIENTRY DllMain(HMODULE hmod, DWORD reason, PVOID)
 
 				    if (!g_is_enhanced)
 				    {
+					    if (!*g_pointers->m_anticheat_initialized_hash)
+					    {
+						    *g_pointers->m_anticheat_initialized_hash = new rage::Obf32; // this doesn't get freed so we don't have to use the game allocator
+						    (*g_pointers->m_anticheat_initialized_hash)->setData(0x124EA49D);
+					    }
+					    else
+					    {
+						    (*g_pointers->m_anticheat_initialized_hash)->setData(0x124EA49D);
+					    }
+
 					    while (!disable_anticheat_skeleton())
 					    {
 						    LOG(WARNING) << "Failed patching anticheat gameskeleton (injected too early?). Waiting 500ms and trying again";

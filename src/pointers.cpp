@@ -12,6 +12,17 @@ namespace big
 {
 	pointers::pointers()
 	{
+		memory::pattern_batch early_batch;
+
+		early_batch.add("Game Version", "8B C3 33 D2 C6 44 24 20", -1, -1, eGameBranch::Legacy, [this](memory::handle ptr) {
+			g_game_version = std::stoi(ptr.add(0x24).rip().as<const char*>());
+		});
+		early_batch.add("Game Version", "4C 8D 0D ? ? ? ? 48 8D 5C 24 ? 48 89 D9 48", -1, -1, eGameBranch::Enhanced, [this](memory::handle ptr) {
+			g_game_version = std::stoi(ptr.add(3).rip().as<const char*>());
+		});
+
+		early_batch.run(memory::module(nullptr));
+
 		memory::pattern_batch main_batch;
 
 		main_batch.add("Screen Resolution", "66 0F 6E 0D ? ? ? ? 0F B7 3D", -1, -1, eGameBranch::Legacy, [this](memory::handle ptr) {
@@ -104,8 +115,7 @@ namespace big
 			    memory::byte_patch::make(ptr.add(8).as<PVOID>(), std::to_array<uint8_t>({0x90, 0x90})).get();
 		});
 		main_batch.add("Model Spawn Bypass", "E8 ? ? ? ? 48 8B 78 48", -1, -1, eGameBranch::Enhanced, [this](memory::handle ptr) {
-			m_model_spawn_bypass =
-			    memory::byte_patch::make(ptr.add(1).rip().add(0x2B).as<uint8_t*>(), 0xEB).get();
+			m_model_spawn_bypass = memory::byte_patch::make(ptr.add(1).rip().add(0x2B).as<uint8_t*>(), 0xEB).get();
 		});
 
 		main_batch.add("Ptr To Handle", "48 8B F9 48 83 C1 10 33 DB", -1, -1, eGameBranch::Legacy, [this](memory::handle ptr) {
@@ -133,6 +143,19 @@ namespace big
 
 		main_batch.add("Nullsub", "90 C3 CC", [this](memory::handle ptr) {
 			m_nullsub = ptr.as<void (*)()>();
+		});
+
+		main_batch.add("Anticheat Initialized Hash", "48 83 EC 20 48 8B D9 48 8B 0D ? ? ? ? 48 85 C9 0F 84", -1, -1, eGameBranch::Legacy, [this](memory::handle ptr) {
+			m_anticheat_initialized_hash     = ptr.add(10).rip().as<rage::Obf32**>();
+			m_get_anticheat_initialized_hash = ptr.add(24).rip().add(1).rip().as<PVOID>();
+		});
+
+		main_batch.add("Anticheat Initialized Hash 2", "89 8B E8 00 00 00 48 8B 0D", -1, -1, eGameBranch::Legacy, [this](memory::handle ptr) {
+			m_get_anticheat_initialized_hash_2 = ptr.add(14).rip().as<PVOID>();
+		});
+
+		main_batch.add("Anticheat Context", "8B D0 41 54", -1, -1, eGameBranch::Legacy, [this](memory::handle ptr) {
+			m_anticheat_context = ptr.sub(10).rip().as<CAnticheatContext**>();
 		});
 
 		main_batch.run(memory::module(nullptr));

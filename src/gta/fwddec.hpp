@@ -52,7 +52,13 @@ namespace rage
 	class rlSessionInfo;
 	class rlSessionByGamerTaskResult;
 	struct game_skeleton;
+	template <typename T>
+	class ObfVar;
+	using Obf16 = ObfVar<unsigned short>;
+	using Obf32 = ObfVar<unsigned int>;
 }
+
+class CAnticheatContext;
 
 class GtaThread;
 

@@ -36,50 +36,6 @@ namespace big
 		return true;
 	}
 
-	// This is stupid, we already have code for this.
-	bool is_unwanted_dependency_enhanced(void* addr)
-	{
-		if (!addr || !is_address_in_game_region(addr))
-			return false;
-
-		auto as_bytes = reinterpret_cast<std::uint8_t*>(addr);
-
-		if (as_bytes[0] != 0xE9)
-			return false;
-
-		auto jmp_addr = memory::handle(addr).add(1).rip().as<uint64_t*>();
-
-		if (!is_address_in_game_region(jmp_addr))
-			return false;
-
-		return true; // likely, yes
-	}
-
-	void hooks::queue_dependency_enhanced(intptr_t a1)
-	{
-		auto f1 = *reinterpret_cast<void**>(a1 + 0x60);
-		auto f2 = *reinterpret_cast<void**>(a1 + 0x100);
-		auto f3 = *reinterpret_cast<void**>(a1 + 0x1A0);
-
-		if (!f1)
-			return g_hooking->get_original<hooks::queue_dependency_enhanced>()(a1);
-
-		if (f1 == g_pointers->m_sig_scan_memory)
-		{
-			LOGF(WARNING, "QueueDependency: Blocked the sig scanner dependency from being queued");
-			return;
-		}
-
-		int arx_score = (int)is_unwanted_dependency_enhanced(f1) + (int)is_unwanted_dependency_enhanced(f2) + (int)is_unwanted_dependency_enhanced(f3);
-
-		if (arx_score >= 2)
-		{
-			return;
-		}
-
-		g_hooking->get_original<hooks::queue_dependency_enhanced>()(a1);
-	}
-
 
 	static bool nullsub()
 	{

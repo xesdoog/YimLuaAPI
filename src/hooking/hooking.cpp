@@ -38,17 +38,13 @@ namespace big
 		detour_hook_helper::add<hooks::swapchain_resizebuffers>("ResizeBuffers", swapchain_vft[hooks::swapchain_resizebuffers_index]);
 #endif
 
-		if (g_is_enhanced)
-		{
-			detour_hook_helper::add<hooks::queue_dependency_enhanced>("Queue Dependency", (void*)g_pointers->m_queue_dependency);
-		}
-		else
+		if (!g_is_enhanced)
 		{
 			detour_hook_helper::add<hooks::queue_dependency_legacy>("Queue Dependency", (void*)g_pointers->m_queue_dependency);
-
-			detour_hook_helper::add<hooks::get_anticheat_initialized_hash>("GAIH", g_pointers->m_get_anticheat_initialized_hash);
-			detour_hook_helper::add<hooks::get_anticheat_initialized_hash_2>("GAIH2", g_pointers->m_get_anticheat_initialized_hash_2);
 		}
+
+		detour_hook_helper::add<hooks::get_anticheat_initialized_hash>("GAIH", g_pointers->m_get_anticheat_initialized_hash);
+		detour_hook_helper::add<hooks::get_anticheat_initialized_hash_2>("GAIH2", g_pointers->m_get_anticheat_initialized_hash_2);
 
 		detour_hook_helper::add<hooks::run_script_threads>("Script hook", (void*)g_pointers->m_run_script_threads);
 		detour_hook_helper::add<hooks::init_native_tables>("Init Native Tables", (void*)g_pointers->m_init_native_tables);

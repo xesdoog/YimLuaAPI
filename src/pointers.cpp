@@ -149,13 +149,23 @@ namespace big
 			m_anticheat_initialized_hash     = ptr.add(10).rip().as<rage::Obf32**>();
 			m_get_anticheat_initialized_hash = ptr.add(24).rip().add(1).rip().as<PVOID>();
 		});
+		main_batch.add("Anticheat Initialized Hash", "89 9E C8 00 00 00 48 8B 0D ? ? ? ? 48 85 C9 74 46", -1, -1, eGameBranch::Enhanced, [this](memory::handle ptr) {
+			m_anticheat_initialized_hash     = ptr.add(9).rip().as<rage::Obf32**>();
+			m_get_anticheat_initialized_hash = ptr.add(0x13).rip().as<PVOID>();
+		});
 
 		main_batch.add("Anticheat Initialized Hash 2", "89 8B E8 00 00 00 48 8B 0D", -1, -1, eGameBranch::Legacy, [this](memory::handle ptr) {
 			m_get_anticheat_initialized_hash_2 = ptr.add(14).rip().as<PVOID>();
 		});
+		main_batch.add("Anticheat Initialized Hash 2", "89 9E E8 00 00 00 89 C2 E8 ? ? ? ? 69", -1, -1, eGameBranch::Enhanced, [this](memory::handle ptr) {
+			m_get_anticheat_initialized_hash_2 = ptr.add(0x9).rip().as<PVOID>();
+		});
 
 		main_batch.add("Anticheat Context", "8B D0 41 54", -1, -1, eGameBranch::Legacy, [this](memory::handle ptr) {
 			m_anticheat_context = ptr.sub(10).rip().as<CAnticheatContext**>();
+		});
+		main_batch.add("Anticheat Context", "48 8D BB 70 0A 00 00 4C 8D 35 ? ? ? ? 66 90", -1, -1, eGameBranch::Enhanced, [this](memory::handle ptr) {
+			m_anticheat_context = ptr.sub(0x12).add(3).rip().as<CAnticheatContext**>();
 		});
 
 		main_batch.run(memory::module(nullptr));

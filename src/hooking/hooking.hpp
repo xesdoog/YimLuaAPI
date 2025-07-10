@@ -22,7 +22,6 @@ namespace big
 		static BOOL set_cursor_pos(int x, int y);
 
 		static int queue_dependency_legacy(void* a1, int a2, int64_t dependency);
-		static void queue_dependency_enhanced(intptr_t a1);
 
 		static std::uint32_t get_anticheat_initialized_hash();
 		static std::uint32_t get_anticheat_initialized_hash_2(void* ac_var, std::uint32_t seed);

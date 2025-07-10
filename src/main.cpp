@@ -135,12 +135,8 @@ BOOL APIENTRY DllMain(HMODULE hmod, DWORD reason, PVOID)
 					    if (!*g_pointers->m_anticheat_initialized_hash)
 					    {
 						    *g_pointers->m_anticheat_initialized_hash = new rage::Obf32; // this doesn't get freed so we don't have to use the game allocator
-						    (*g_pointers->m_anticheat_initialized_hash)->setData(0x124EA49D);
 					    }
-					    else
-					    {
-						    (*g_pointers->m_anticheat_initialized_hash)->setData(0x124EA49D);
-					    }
+					    (*g_pointers->m_anticheat_initialized_hash)->setData(0x124EA49D);
 
 					    while (!disable_anticheat_skeleton())
 					    {

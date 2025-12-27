@@ -52,7 +52,7 @@ namespace big::entity
 	{
 		if (!ENTITY::DOES_ENTITY_EXIST(ent))
 		{
-			ent = NULL;
+			ent = 0;
 			return;
 		}
 

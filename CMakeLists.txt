@@ -36,10 +36,16 @@ file(GLOB_RECURSE SRC_MAIN
     "${SRC_DIR}/**.cxx"
     "${SRC_DIR}/**.asm"
 )
+
+if (MSVC)
+    add_compile_options(/bigobj)
+    add_compile_options("$<$<C_COMPILER_ID:MSVC>:/utf-8>")
+    add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
+else ()
+    add_compile_options(-Wa,-mbig-obj)
+endif ()
+
 add_library(${CMAKE_PROJECT_NAME} MODULE "${SRC_MAIN}")
-
-
-
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 set_property(TARGET ${CMAKE_PROJECT_NAME} PROPERTY CXX_STANDARD 23)

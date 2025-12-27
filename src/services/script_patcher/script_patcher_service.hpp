@@ -13,6 +13,7 @@
 #include "script_data.hpp"
 #include "script_patch.hpp"
 
+#include <list>
 #include <script/scrProgram.hpp>
 
 namespace big

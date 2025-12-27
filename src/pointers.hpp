@@ -54,6 +54,31 @@ namespace big
 		PVOID m_queue_dependency;
 		PVOID m_sig_scan_memory;
 
+		const char* m_game_version;
+		const char* m_online_version;
+
+		void** m_ped_pool{};
+		void** m_prop_pool{};
+		void*** m_vehicle_pool{};
+
+		functions::give_pickup_rewards m_give_pickup_rewards{};
+		functions::queue_packet m_queue_packet{};
+
+		functions::get_net_object m_get_net_object;
+
+		functions::request_control m_request_control{};
+
+		CNetworkObjectMgr** m_network_object_mgr{};
+
+		functions::fidevice_get_device m_fidevice_get_device;
+		functions::fipackfile_ctor m_fipackfile_ctor;
+		functions::fipackfile_dtor m_fipackfile_dtor;
+		rage::fiPackfile** m_fipackfile_instances;
+		functions::fipackfile_open_archive m_fipackfile_open_archive;
+		functions::fipackfile_mount m_fipackfile_mount;
+		functions::fipackfile_unmount m_fipackfile_unmount;
+		functions::fipackfile_close_archive m_fipackfile_close_archive;
+
 		rage::Obf32** m_anticheat_initialized_hash;
 		PVOID m_get_anticheat_initialized_hash;
 		PVOID m_get_anticheat_initialized_hash_2;

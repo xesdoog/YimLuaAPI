@@ -58,6 +58,11 @@
 #include "core/settings.hpp"
 
 #include <ped/CPed.hpp>
+
+#include "services/notifications/notification_service.hpp"
+
+#include "lua/sol_include.hpp"
+
 #include <script/types.hpp>
 
 // clang-format on
@@ -84,11 +89,25 @@ namespace big
 	inline std::atomic_bool g_is_enhanced{false};
 	inline uint32_t g_game_version{false};
 
-	namespace self
-	{
-		inline Ped ped;
-		inline Player id;
-		inline Vector3 pos;
-		inline Vehicle veh;
-	}
 }
+
+namespace self
+{
+	inline Ped ped;
+	inline Player id;
+	inline Vector3 pos;
+	inline Vector3 rot;
+	inline Vehicle veh;
+	inline int char_index;
+}
+
+template<size_t N>
+struct template_str
+{
+	constexpr template_str(const char (&str)[N])
+	{
+		std::copy_n(str, N, value);
+	}
+
+	char value[N];
+};

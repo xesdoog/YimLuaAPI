@@ -11,7 +11,7 @@ namespace memory
 {
 	class pattern
 	{
-		friend pattern_batch;
+		friend batch;
 		friend range;
 
 	public:

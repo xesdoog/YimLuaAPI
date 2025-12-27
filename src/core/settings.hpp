@@ -50,16 +50,11 @@ namespace big
 			NLOHMANN_DEFINE_TYPE_INTRUSIVE(settings, hotkeys)
 		} settings{};
 
-		struct demo
+		struct lua
 		{
-			bool demo_bool                 = false;
-			int demo_int                   = 1;
-			double demo_double             = 1.0;
-			int demo_combo                 = 0;
-			int64_t demo_bitset            = 62678480396171113;
-			std::string demo_vehicle_model = "";
-			NLOHMANN_DEFINE_TYPE_INTRUSIVE(demo, demo_bool, demo_int, demo_double, demo_combo, demo_bitset, demo_vehicle_model)
-		} demo{};
+			bool enable_auto_reload_changed_scripts = false;
+			NLOHMANN_DEFINE_TYPE_INTRUSIVE(lua, enable_auto_reload_changed_scripts)
+		} lua{};
 
 		struct window
 		{
@@ -77,7 +72,7 @@ namespace big
 
 		bool in_script_vm = false;
 
-		NLOHMANN_DEFINE_TYPE_INTRUSIVE(menu_settings, demo, window, settings)
+		NLOHMANN_DEFINE_TYPE_INTRUSIVE(menu_settings, window, lua, settings)
 	};
 
 	inline auto g = menu_settings();

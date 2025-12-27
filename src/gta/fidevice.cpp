@@ -22,7 +22,6 @@
  * You should have received a copy of the GNU General Public License along with YimMenu. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#if 0
 #include "fidevice.hpp"
 
 #include "hooking/hooking.hpp"
@@ -303,4 +302,3 @@ namespace rage
 		big::g_pointers->m_fipackfile_unmount(rootPath);
 	}
 }
-#endif

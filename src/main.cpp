@@ -10,11 +10,16 @@
 #include "file_manager.hpp"
 #include "gta/joaat.hpp"
 #include "hooking/hooking.hpp"
+#include "lua/lua_manager.hpp"
 #include "native_hooks/native_hooks.hpp"
 #include "pointers.hpp"
 #include "script_mgr.hpp"
 #include "security/ObfVar.hpp"
+#include "services/gta_data/gta_data_service.hpp"
+#include "services/notifications/notification_service.hpp"
+#include "services/players/player_service.hpp"
 #include "services/script_patcher/script_patcher_service.hpp"
+#include "services/tunables/tunables_service.hpp"
 #include "thread_pool.hpp"
 #include "util/is_enhanced.hpp"
 
@@ -120,8 +125,14 @@ BOOL APIENTRY DllMain(HMODULE hmod, DWORD reason, PVOID)
 				    auto hooking_instance = std::make_unique<hooking>();
 				    LOG(INFO) << "Hooking initialized.";
 
+				    auto notification_service_instance   = std::make_unique<notification_service>();
+				    auto player_service_instance         = std::make_unique<player_service>();
 				    auto script_patcher_service_instance = std::make_unique<script_patcher_service>();
-				    LOG(INFO) << "Script Patcher initialized.";
+				    auto tunables_service_instance       = std::make_unique<tunables_service>();
+				    LOG(INFO) << "Registered service instances...";
+
+				    g_notification_service.initialise();
+				    LOG(INFO) << "Finished initialising services.";
 
 				    g_script_mgr.add_script(std::make_unique<script>(&backend::loop));
 #ifdef ENABLE_GUI
@@ -135,14 +146,22 @@ BOOL APIENTRY DllMain(HMODULE hmod, DWORD reason, PVOID)
 				    auto native_hooks_instance = std::make_unique<native_hooks>();
 				    LOG(INFO) << "Dynamic native hooker initialized.";
 
+				    auto lua_manager_instance =
+				        std::make_unique<lua_manager>(g_file_manager.get_project_folder("scripts"), g_file_manager.get_project_folder("scripts_config"));
+				    LOG(INFO) << "Lua manager initialized.";
+
+
 				    while (g_running)
 					    std::this_thread::sleep_for(500ms);
 
-				    g_hooking->disable();
-				    LOG(INFO) << "Hooking disabled.";
+				    lua_manager_instance.reset();
+				    LOG(INFO) << "Lua manager uninitialized.";
 
 				    g_script_mgr.remove_all_scripts();
 				    LOG(INFO) << "Scripts unregistered.";
+
+				    g_hooking->disable();
+				    LOG(INFO) << "Hooking disabled.";
 
 				    // cleans up the thread responsible for saving settings
 				    g.destroy();
@@ -152,8 +171,16 @@ BOOL APIENTRY DllMain(HMODULE hmod, DWORD reason, PVOID)
 				    thread_pool_instance->destroy();
 				    LOG(INFO) << "Destroyed thread pool.";
 
+				    tunables_service_instance.reset();
+				    LOG(INFO) << "Player Database Service reset.";
 				    script_patcher_service_instance.reset();
-				    LOG(INFO) << "Script Patcher Service reset.";
+				    LOG(INFO) << "Mobile Service reset.";
+				    player_service_instance.reset();
+				    LOG(INFO) << "Xml Vehicles Service reset.";
+				    notification_service_instance.reset();
+				    LOG(INFO) << "Notification Service reset.";
+				    LOG(INFO) << "Services uninitialized.";
+
 
 				    hooking_instance.reset();
 				    LOG(INFO) << "Hooking uninitialized.";

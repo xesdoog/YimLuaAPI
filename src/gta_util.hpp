@@ -6,6 +6,7 @@
 
 #include <network/CNetworkPlayerMgr.hpp>
 #include <ped/CPedFactory.hpp>
+#include <script/scrProgramTable.hpp>
 #include <script/tlsContext.hpp>
 
 
@@ -48,6 +49,11 @@ namespace big::gta_util
 		}
 
 		return nullptr;
+	}
+
+	inline CNetworkPlayerMgr* get_network_player_mgr()
+	{
+		return *g_pointers->m_network_player_mgr;
 	}
 
 	template<typename F, typename... Args>
@@ -101,4 +107,16 @@ namespace big::gta_util
 
 		return nullptr;
 	}
+
+	inline rage::scrProgram* find_script_program(rage::joaat_t hash)
+	{
+		for (auto& script : *g_pointers->m_script_program_table)
+		{
+			if (script.m_program && script.m_program->m_name_hash == hash)
+				return script.m_program;
+		}
+
+		return nullptr;
+	}
+
 }

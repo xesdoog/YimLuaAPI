@@ -23,6 +23,10 @@ namespace big
 		static void root();
 		static void menu_bar();
 		static void main_view();
+		static void notifications();
+
+		static void lua_scripts();
+		static void gta_cache();
 
 		static void debug_tabs();
 		static void debug_demo();

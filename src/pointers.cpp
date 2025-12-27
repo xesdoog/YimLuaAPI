@@ -12,18 +12,20 @@ namespace big
 {
 	pointers::pointers()
 	{
-		memory::pattern_batch early_batch;
+		memory::batch early_batch;
 
 		early_batch.add("Game Version", "8B C3 33 D2 C6 44 24 20", -1, -1, eGameBranch::Legacy, [this](memory::handle ptr) {
 			g_game_version = std::stoi(ptr.add(0x24).rip().as<const char*>());
+			m_game_version = ptr.add(0x24).rip().as<const char*>();
 		});
 		early_batch.add("Game Version", "4C 8D 0D ? ? ? ? 48 8D 5C 24 ? 48 89 D9 48", -1, -1, eGameBranch::Enhanced, [this](memory::handle ptr) {
 			g_game_version = std::stoi(ptr.add(3).rip().as<const char*>());
+			m_game_version = ptr.add(3).rip().as<const char*>();
 		});
 
-		early_batch.run(memory::module(nullptr));
+		early_batch.run(memory::module(""));
 
-		memory::pattern_batch main_batch;
+		memory::batch main_batch;
 
 		main_batch.add("Screen Resolution", "66 0F 6E 0D ? ? ? ? 0F B7 3D", -1, -1, eGameBranch::Legacy, [this](memory::handle ptr) {
 			m_resolution_x = ptr.sub(4).rip().as<uint32_t*>();
@@ -164,7 +166,59 @@ namespace big
 			m_anticheat_context = ptr.sub(0x12).add(3).rip().as<CAnticheatContext**>();
 		});
 
-		main_batch.run(memory::module(nullptr));
+		main_batch.add("Give Pickup Reward", "48 8B C8 33 C0 48 85 C9 74 0A 44 8B C3 8B D7 E8", -1, -1, eGameBranch::Legacy, [this](memory::handle ptr) {
+			m_give_pickup_rewards = ptr.sub(0x28).as<decltype(m_give_pickup_rewards)>();
+		});
+		main_batch.add("Give Pickup Reward", "8B 53 08 89 F9 E8 ? ? ? ? E9", -1, -1, eGameBranch::Enhanced, [this](memory::handle ptr) {
+			m_give_pickup_rewards = ptr.add(6).rip().as<decltype(m_give_pickup_rewards)>();
+		});
+
+		main_batch.add("Queue Packet", "E8 ? ? ? ? 84 C0 74 4D B3 01", -1, -1, eGameBranch::Legacy, [this](memory::handle ptr) {
+			m_queue_packet = ptr.add(1).rip().as<functions::queue_packet>();
+		});
+		main_batch.add("Queue Packet", "45 89 F1 E8 ? ? ? ? 84 C0 74 25", -1, -1, eGameBranch::Enhanced, [this](memory::handle ptr) {
+			m_queue_packet = ptr.add(4).rip().as<functions::queue_packet>();
+		});
+
+		main_batch.add("Get Net Object", "48 89 5C 24 08 48 89 6C 24 10 48 89 74 24 18 57 41 54 41 55 41 56 41 57 48 83 EC 40 4C 8B EA", -1, -1, eGameBranch::Legacy, [this](memory::handle ptr) {
+			m_get_net_object = ptr.add(0x109).add(1).rip().as<decltype(pointers::m_get_net_object)>(); // E8 ? ? ? ? 0F B7 53 7C .add(1).rip().as()
+		});
+
+		main_batch.add("Request Control", "E8 ? ? ? ? EB 50 48 8B D3", -1, -1, eGameBranch::Legacy, [this](memory::handle ptr) {
+			m_request_control = ptr.add(1).rip().as<functions::request_control>();
+		});
+		main_batch.add("Request Control", "74 0A 48 89 F9 E8 ? ? ? ? 31 F6 89 F0 48 83 C4 20", -1, -1, eGameBranch::Enhanced, [this](memory::handle ptr) {
+			m_request_control = ptr.add(6).rip().as<functions::request_control>();
+		});
+
+		main_batch.add("CNetworkObjectMgr", "48 8B 0D ? ? ? ? 45 33 C0 E8 ? ? ? ? 33 FF 4C 8B F0", -1, -1, eGameBranch::Legacy, [this](memory::handle ptr) {
+			m_network_object_mgr = ptr.add(3).rip().as<CNetworkObjectMgr**>();
+		});
+		main_batch.add("CNetworkObjectMgr", "41 83 7E FA 02 40 0F 9C C5 C1 E5 02", -1, -1, eGameBranch::Enhanced, [this](memory::handle ptr) {
+			m_network_object_mgr     = ptr.add(0xC).add(3).rip().as<CNetworkObjectMgr**>();
+		});
+
+		main_batch.add("fiDevice Get Device", "41 B8 07 00 00 00 48 8B F1 E8", -1, -1, eGameBranch::Legacy, [this](memory::handle ptr) {
+			m_fidevice_get_device = ptr.sub(0x1F).as<functions::fidevice_get_device>();
+		});
+
+		main_batch.add("fiPackfile ctor", "44 89 41 28 4C 89 41 38 4C 89 41 50 48 8D", -1, -1, eGameBranch::Legacy, [this](memory::handle ptr) {
+			m_fipackfile_ctor      = ptr.sub(0x1E).as<functions::fipackfile_ctor>();
+			m_fipackfile_instances = ptr.add(26).rip().as<rage::fiPackfile**>();
+		});
+
+		main_batch.add("fiPackfile dtor", "48 89 5C 24 08 57 48 83 EC 20 48 8D 05 ? ? ? ? 33 FF 48 8B D9 48 89 01 40 88", -1, -1, eGameBranch::Legacy, [this](memory::handle ptr) {
+			m_fipackfile_dtor = ptr.as<functions::fipackfile_dtor>();
+		});
+		
+		main_batch.add("fiPackfile stuff", "E8 ? ? ? ? 48 8D 0D ? ? ? ? E8 ? ? ? ? 8A 05 ? ? ? ? 48 8D 0D", -1, -1, eGameBranch::Legacy, [this](memory::handle ptr) {
+			m_fipackfile_unmount = ptr.add(1).rip().as<functions::fipackfile_unmount>();
+			m_fipackfile_close_archive = ptr.add(0xD).rip().as<functions::fipackfile_close_archive>();
+			m_fipackfile_open_archive = ptr.add(0x34).rip().as<functions::fipackfile_open_archive>();
+			m_fipackfile_mount = ptr.add(0x47).rip().as<functions::fipackfile_mount>();
+		});
+
+		main_batch.run(memory::module(""));
 
 #ifdef ENABLE_GUI
 		LPCWSTR lpClassName = g_is_enhanced ? L"sgaWindow" : L"grcWindow";

@@ -52,6 +52,8 @@ namespace rage
 	class rlSessionInfo;
 	class rlSessionByGamerTaskResult;
 	struct game_skeleton;
+	class netConnectionManager;
+
 	template <typename T>
 	class ObfVar;
 	using Obf16 = ObfVar<unsigned short>;

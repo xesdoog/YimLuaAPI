@@ -5,6 +5,7 @@
 
 #ifdef ENABLE_GUI
 
+#include "lua/lua_manager.hpp"
 #include "pointers.hpp"
 #include "views/view.hpp"
 
@@ -16,6 +17,8 @@ namespace big
 		{
 			if (ImGui::BeginTabBar("tabbar"))
 			{
+				g_lua_manager->draw_tabs();
+
 				if (ImGui::BeginTabItem("Debug"))
 				{
 					view::debug_tabs();

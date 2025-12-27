@@ -10,7 +10,7 @@ namespace big
 {
 	bool inline is_address_in_game_region(void* address)
 	{
-		return memory::module(nullptr).contains(memory::handle(address));
+		return memory::module("").contains(memory::handle(address));
 	}
 
 	struct ac_verifier

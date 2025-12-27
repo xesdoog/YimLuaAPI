@@ -89,15 +89,6 @@ BOOL APIENTRY DllMain(HMODULE hmod, DWORD reason, PVOID)
 				    auto pointers_instance = std::make_unique<pointers>();
 				    LOG(INFO) << "Pointers initialized.";
 
-				    if (!g_is_enhanced)
-				    {
-					    if (!*g_pointers->m_anticheat_initialized_hash)
-					    {
-						    *g_pointers->m_anticheat_initialized_hash = new rage::Obf32; // this doesn't get freed so we don't have to use the game allocator
-					    }
-					    (*g_pointers->m_anticheat_initialized_hash)->setData(0x124EA49D);
-				    }
-
 				    auto byte_patch_manager_instance = std::make_unique<byte_patch_manager>();
 				    LOG(INFO) << "Byte Patch Manager initialized.";
 

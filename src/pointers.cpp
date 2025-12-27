@@ -131,41 +131,6 @@ namespace big
 			m_ptr_to_handle = ptr.sub(0xB).add(1).rip().as<decltype(m_ptr_to_handle)>();
 		});
 
-		main_batch.add("Queue Dependency", "48 89 5C 24 08 48 89 74 24 10 57 48 83 EC 20 8B F2 49 8B F8", -1, -1, eGameBranch::Legacy, [this](memory::handle ptr) {
-			m_queue_dependency = ptr.as<PVOID>();
-		});
-		main_batch.add("Queue Dependency", "0F 29 46 50 48 8D 05", -1, -1, eGameBranch::Enhanced, [this](memory::handle ptr) {
-			m_queue_dependency = ptr.add(0x71).add(1).rip().as<PVOID>();
-			m_sig_scan_memory  = ptr.add(4).add(3).rip().as<PVOID>();
-		});
-
-		main_batch.add("Game Skeleton Update", "40 53 48 83 EC 20 48 8B 81 40 01", -1, -1, eGameBranch::Legacy, [this](memory::handle ptr) {
-			m_game_skeleton_update = ptr.as<PVOID*>();
-		});
-
-		main_batch.add("Anticheat Initialized Hash", "48 83 EC 20 48 8B D9 48 8B 0D ? ? ? ? 48 85 C9 0F 84", -1, -1, eGameBranch::Legacy, [this](memory::handle ptr) {
-			m_anticheat_initialized_hash     = ptr.add(10).rip().as<rage::Obf32**>();
-			m_get_anticheat_initialized_hash = ptr.add(24).rip().add(1).rip().as<PVOID>();
-		});
-		main_batch.add("Anticheat Initialized Hash", "89 9E C8 00 00 00 48 8B 0D ? ? ? ? 48 85 C9 74 46", -1, -1, eGameBranch::Enhanced, [this](memory::handle ptr) {
-			m_anticheat_initialized_hash     = ptr.add(9).rip().as<rage::Obf32**>();
-			m_get_anticheat_initialized_hash = ptr.add(0x13).rip().as<PVOID>();
-		});
-
-		main_batch.add("Anticheat Initialized Hash 2", "89 8B E8 00 00 00 48 8B 0D", -1, -1, eGameBranch::Legacy, [this](memory::handle ptr) {
-			m_get_anticheat_initialized_hash_2 = ptr.add(14).rip().as<PVOID>();
-		});
-		main_batch.add("Anticheat Initialized Hash 2", "89 9E E8 00 00 00 89 C2 E8 ? ? ? ? 69", -1, -1, eGameBranch::Enhanced, [this](memory::handle ptr) {
-			m_get_anticheat_initialized_hash_2 = ptr.add(0x9).rip().as<PVOID>();
-		});
-
-		main_batch.add("Anticheat Context", "69 C9 FD 43 03 00 8B D0", -1, -1, eGameBranch::Legacy, [this](memory::handle ptr) {
-			m_anticheat_context = ptr.sub(4).rip().as<CAnticheatContext**>();
-		});
-		main_batch.add("Anticheat Context", "48 8D BB 70 0A 00 00 4C 8D 35 ? ? ? ? 66 90", -1, -1, eGameBranch::Enhanced, [this](memory::handle ptr) {
-			m_anticheat_context = ptr.sub(0x12).add(3).rip().as<CAnticheatContext**>();
-		});
-
 		main_batch.add("Ped Pool", "4C 8B 35 ? ? ? ? B8", -1, -1, eGameBranch::Legacy, [this](memory::handle ptr) {
 			m_ped_pool = ptr.add(3).rip().as<void**>();
 		});
@@ -264,8 +229,8 @@ namespace big
 		main_batch.add("tlsContext thread offset", "48 8B F9 E8 ? ? ? ? FF 47", -1, -1, eGameBranch::Legacy, [this](memory::handle ptr) {
 			m_tls_context_thread_offset = *ptr.add(4).rip().add(16).as<uint32_t*>();
 		});
-		main_batch.add("tlsContext thread offset", "E8 ? ? ? ? 4C 8B B0 ? ? ? ? 40", -1, -1, eGameBranch::Enhanced, [this](memory::handle ptr) {
-			m_tls_context_thread_offset = *ptr.add(1).rip().add(22).as<uint32_t*>();
+		main_batch.add("tlsContext thread offset", "F3 45 0F 58 DC E8", -1, -1, eGameBranch::Enhanced, [this](memory::handle ptr) {
+			m_tls_context_thread_offset = *ptr.add(6).rip().add(22).as<uint32_t*>();
 		});
 
 		main_batch.add("Allocator", "48 8D 1D ? ? ? ? A8 08", -1, -1, eGameBranch::Legacy, [this](memory::handle ptr) {

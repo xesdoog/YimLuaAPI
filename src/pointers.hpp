@@ -24,7 +24,6 @@ namespace big
 		eGameState* m_game_state{};
 		bool* m_is_session_started{};
 
-		PVOID m_game_skeleton_update;
 
 		CPedFactory** m_ped_factory{};
 		CNetworkPlayerMgr** m_network_player_mgr{};
@@ -51,9 +50,6 @@ namespace big
 		functions::ptr_to_handle m_ptr_to_handle{};
 		functions::handle_to_ptr m_handle_to_ptr{};
 
-		PVOID m_queue_dependency;
-		PVOID m_sig_scan_memory;
-
 		const char* m_game_version;
 		const char* m_online_version;
 
@@ -78,11 +74,6 @@ namespace big
 		functions::fipackfile_mount m_fipackfile_mount;
 		functions::fipackfile_unmount m_fipackfile_unmount;
 		functions::fipackfile_close_archive m_fipackfile_close_archive;
-
-		rage::Obf32** m_anticheat_initialized_hash;
-		PVOID m_get_anticheat_initialized_hash;
-		PVOID m_get_anticheat_initialized_hash_2;
-		CAnticheatContext** m_anticheat_context;
 
 		bool* m_natives_registered;
 		PVOID m_gta_thread_vtable;

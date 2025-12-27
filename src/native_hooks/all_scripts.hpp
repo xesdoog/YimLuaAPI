@@ -20,18 +20,6 @@ namespace big
 {
 	namespace all_scripts
 	{
-		inline void SC_TRANSITION_NEWS_SHOW(rage::scrNativeCallContext* src)
-		{
-			LOG(VERBOSE) << "SC_TRANSITION_NEWS_SHOW";
-			src->set_return_value<BOOL>(SOCIALCLUB::SC_TRANSITION_NEWS_SHOW(src->get_arg<Any>(0)));
-		}
-
-		inline void SC_TRANSITION_NEWS_SHOW_TIMED(rage::scrNativeCallContext* src)
-		{
-			LOG(VERBOSE) << "SC_TRANSITION_NEWS_SHOW_TIMED";
-			src->set_return_value<BOOL>(SOCIALCLUB::SC_TRANSITION_NEWS_SHOW_TIMED(src->get_arg<Any>(0), src->get_arg<Any>(0)));
-		}
-
 		void RETURN_TRUE(rage::scrNativeCallContext* src)
 		{
 			src->set_return_value<BOOL>(TRUE);

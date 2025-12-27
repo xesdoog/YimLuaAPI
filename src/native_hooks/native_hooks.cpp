@@ -111,9 +111,6 @@ namespace big
 
 	native_hooks::native_hooks()
 	{
-		add_native_detour(0x6BFB12CE158E3DD4, all_scripts::SC_TRANSITION_NEWS_SHOW);       // Stops news.
-		add_native_detour(0xFE4C1D0D3B9CC17E, all_scripts::SC_TRANSITION_NEWS_SHOW_TIMED); // Stops news.
-
 		add_native_detour(RAGE_JOAAT("shop_controller"), 0x34616828CD07F1A1, all_scripts::RETURN_FALSE); // prevent exploit reports
 
 		for (auto& entry : *g_pointers->m_script_program_table)

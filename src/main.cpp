@@ -179,7 +179,6 @@ BOOL APIENTRY DllMain(HMODULE hmod, DWORD reason, PVOID)
 				    LOG(INFO) << "Notification Service reset.";
 				    LOG(INFO) << "Services uninitialized.";
 
-
 				    hooking_instance.reset();
 				    LOG(INFO) << "Hooking uninitialized.";
 

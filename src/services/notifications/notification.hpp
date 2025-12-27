@@ -20,7 +20,7 @@ namespace big
 		NotificationType m_type;
 
 		std::chrono::high_resolution_clock::duration m_lifetime;
-		std::chrono::steady_clock::time_point m_destroy_time;
+		std::chrono::high_resolution_clock::time_point m_destroy_time;
 
 		ImVec4 m_color;
 		std::size_t m_counter;

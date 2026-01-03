@@ -75,7 +75,6 @@ namespace big
 		functions::fipackfile_unmount m_fipackfile_unmount;
 		functions::fipackfile_close_archive m_fipackfile_close_archive;
 
-		bool* m_natives_registered;
 		PVOID m_gta_thread_vtable;
 
 		uint32_t m_tls_context_allocator_offset;

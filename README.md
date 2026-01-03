@@ -33,6 +33,14 @@ This API is not 1 to 1 compatible with YimMenu's but it's pretty close.
 - `weapons.get_weapon_component_display_desc_string` Return an empty string
 - `script.start_launcher_script` Complains about not being implemented, then does nothing
 
+### API Extentions
+- `FAKE_YIMAPI` A global variable that is always true, a simple way to check that you are running on YimLuaAPI
+- `get_game_branch` Returns a number corresponding to the current game branch.
+- `game_branch.Legacy` May be returned by `get_game_branch`
+- `game_branch.Enhanced` May be returned by `get_game_branch`
+- `game_branch.DontCare` Not used for anything
+- Updated ImGui: YimLuaAPI uses ImGui bindings from BadAPI (ImGui v1.92.0)
+
 ## Building
 
 ### Windows

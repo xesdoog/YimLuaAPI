@@ -89,6 +89,18 @@ BOOL APIENTRY DllMain(HMODULE hmod, DWORD reason, PVOID)
 				    auto pointers_instance = std::make_unique<pointers>();
 				    LOG(INFO) << "Pointers initialized.";
 
+				    bool has_waited = false;
+				    while (g_pointers->m_script_threads->size() == 0)
+				    {
+					    LOG(VERBOSE) << "Natives not initialised yet. Waiting 5s and trying again.";
+					    std::this_thread::sleep_for(5s);
+					    has_waited = true;
+				    }
+				    if (has_waited)
+				    {
+					    std::this_thread::sleep_for(5s);
+				    }
+
 				    auto byte_patch_manager_instance = std::make_unique<byte_patch_manager>();
 				    LOG(INFO) << "Byte Patch Manager initialized.";
 
@@ -117,12 +129,6 @@ BOOL APIENTRY DllMain(HMODULE hmod, DWORD reason, PVOID)
 
 				    auto hooking_instance = std::make_unique<hooking>();
 				    LOG(INFO) << "Hooking initialized.";
-
-				    while (g_pointers->m_script_threads->size() == 0)
-					{
-						LOG(VERBOSE) << "Natives not initialised yet. Waiting 5s and trying again.";
-					    std::this_thread::sleep_for(5s);
-					}
 
 				    auto script_program_instance = std::make_unique<big_program>("BadAPIInternal");
 				    create_script_thread("BadAPIInternal");

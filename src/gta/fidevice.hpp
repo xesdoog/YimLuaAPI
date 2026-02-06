@@ -35,11 +35,6 @@ namespace rage
 	class fiDevice
 	{
 	public:
-		static inline fiDevice* GetDevice(const char* path, bool allowRoot)
-		{
-			return big::g_pointers->m_fidevice_get_device(path, allowRoot);
-		}
-
 		static bool MountGlobal(const char* mountPoint, fiDevice* device, bool allowRoot);
 		static void Unmount(const char* rootPath);
 		static void Unmount(fiDevice const& device);
@@ -80,6 +75,7 @@ namespace rage
 		virtual bool m_xz()                                                                     = 0;
 		virtual bool SetFileAttributes(const char* file, uint32_t FileAttributes)               = 0;
 		virtual int m_yx()                                                                      = 0;
+		virtual int m_yx2()                                                                     = 0; // FIXME: For some reason this is duplicated on enhanced.
 		virtual bool ReadFull(uint64_t handle, void* buffer, uint32_t length)                   = 0;
 		virtual bool WriteFull(uint64_t handle, void* buffer, uint32_t length)                  = 0;
 		virtual int32_t GetResourceVersion(const char* fileName, ResourceFlags* flags)          = 0;
@@ -135,6 +131,7 @@ namespace rage
 		virtual bool m_xz();
 		virtual bool SetFileAttributes(const char* file, uint32_t FileAttributes);
 		virtual int m_yx();
+		virtual int m_yx2();
 		// read even if read() returns less than length
 		virtual bool ReadFull(uint64_t handle, void* buffer, uint32_t length);
 		virtual bool WriteFull(uint64_t handle, void* buffer, uint32_t length);

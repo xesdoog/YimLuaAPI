@@ -56,7 +56,7 @@ namespace big
 			LOG(INFO) << "Failed opening " << reinterpret_cast<const char*>(path.c_str());
 			return;
 		}
-		
+
 		packfile.Mount(mount_path.c_str());
 
 		yim_fipackfile rpf_wrapper = yim_fipackfile(&packfile, mount_path);

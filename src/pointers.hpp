@@ -66,10 +66,8 @@ namespace big
 
 		CNetworkObjectMgr** m_network_object_mgr{};
 
-		functions::fidevice_get_device m_fidevice_get_device;
 		functions::fipackfile_ctor m_fipackfile_ctor;
 		functions::fipackfile_dtor m_fipackfile_dtor;
-		rage::fiPackfile** m_fipackfile_instances;
 		functions::fipackfile_open_archive m_fipackfile_open_archive;
 		functions::fipackfile_mount m_fipackfile_mount;
 		functions::fipackfile_unmount m_fipackfile_unmount;

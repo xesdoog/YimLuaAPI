@@ -2,10 +2,8 @@
  * @file fidevice.cpp
  * @attention If you want to include this file you will need to add the following pointers: 
  * @code {.cpp}
- * functions::fidevice_get_device m_fidevice_get_device;
  * functions::fipackfile_ctor m_fipackfile_ctor;
  * functions::fipackfile_dtor m_fipackfile_dtor;
- * rage::fiPackfile** m_fipackfile_instances;
  * functions::fipackfile_open_archive m_fipackfile_open_archive;
  * functions::fipackfile_mount m_fipackfile_mount;
  * functions::fipackfile_unmount m_fipackfile_unmount;
@@ -223,6 +221,11 @@ namespace rage
 	}
 
 	int fiDeviceImplemented::m_yx()
+	{
+		PURECALL();
+	}
+
+	int fiDeviceImplemented::m_yx2()
 	{
 		PURECALL();
 	}

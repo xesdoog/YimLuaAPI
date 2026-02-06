@@ -15,12 +15,14 @@ namespace big
 		memory::batch early_batch;
 
 		early_batch.add("Game Version", "8B C3 33 D2 C6 44 24 20", -1, -1, eGameBranch::Legacy, [this](memory::handle ptr) {
-			g_game_version = std::stoi(ptr.add(0x24).rip().as<const char*>());
-			m_game_version = ptr.add(0x24).rip().as<const char*>();
+			g_game_version   = std::stoi(ptr.add(0x24).rip().as<const char*>());
+			m_game_version   = ptr.add(0x24).rip().as<const char*>();
+			m_online_version = ptr.add(0x24).rip().add(0x20).as<const char*>();
 		});
 		early_batch.add("Game Version", "4C 8D 0D ? ? ? ? 48 8D 5C 24 ? 48 89 D9 48", -1, -1, eGameBranch::Enhanced, [this](memory::handle ptr) {
-			g_game_version = std::stoi(ptr.add(3).rip().as<const char*>());
-			m_game_version = ptr.add(3).rip().as<const char*>();
+			g_game_version   = std::stoi(ptr.add(3).rip().as<const char*>());
+			m_game_version   = ptr.add(3).rip().as<const char*>();
+			m_online_version = ptr.add(0x47).add(3).rip().as<const char*>();
 		});
 
 		early_batch.run(memory::module(""));
@@ -184,27 +186,34 @@ namespace big
 			m_network_object_mgr = ptr.add(3).rip().as<CNetworkObjectMgr**>();
 		});
 		main_batch.add("CNetworkObjectMgr", "41 83 7E FA 02 40 0F 9C C5 C1 E5 02", -1, -1, eGameBranch::Enhanced, [this](memory::handle ptr) {
-			m_network_object_mgr     = ptr.add(0xC).add(3).rip().as<CNetworkObjectMgr**>();
-		});
-
-		main_batch.add("fiDevice Get Device", "41 B8 07 00 00 00 48 8B F1 E8", -1, -1, eGameBranch::Legacy, [this](memory::handle ptr) {
-			m_fidevice_get_device = ptr.sub(0x1F).as<functions::fidevice_get_device>();
+			m_network_object_mgr = ptr.add(0xC).add(3).rip().as<CNetworkObjectMgr**>();
 		});
 
 		main_batch.add("fiPackfile ctor", "44 89 41 28 4C 89 41 38 4C 89 41 50 48 8D", -1, -1, eGameBranch::Legacy, [this](memory::handle ptr) {
 			m_fipackfile_ctor      = ptr.sub(0x1E).as<functions::fipackfile_ctor>();
-			m_fipackfile_instances = ptr.add(26).rip().as<rage::fiPackfile**>();
+		});
+		main_batch.add("fiPackfile ctor", "41 BB 10 00 00 00 4C 8D", -1, -1, eGameBranch::Enhanced, [this](memory::handle ptr) {
+			m_fipackfile_ctor      = ptr.sub(0xAB).as<functions::fipackfile_ctor>();
 		});
 
 		main_batch.add("fiPackfile dtor", "48 89 5C 24 08 57 48 83 EC 20 48 8D 05 ? ? ? ? 33 FF 48 8B D9 48 89 01 40 88", -1, -1, eGameBranch::Legacy, [this](memory::handle ptr) {
 			m_fipackfile_dtor = ptr.as<functions::fipackfile_dtor>();
 		});
-		
+		main_batch.add("fiPackfile dtor", "56 48 83 EC 20 48 89 CE 48 8D 05 ? ? ? ? 48 89 01 C6 81", -1, -1, eGameBranch::Enhanced, [this](memory::handle ptr) {
+			m_fipackfile_dtor = ptr.as<functions::fipackfile_dtor>();
+		});
+
 		main_batch.add("fiPackfile stuff", "E8 ? ? ? ? 48 8D 0D ? ? ? ? E8 ? ? ? ? 8A 05 ? ? ? ? 48 8D 0D", -1, -1, eGameBranch::Legacy, [this](memory::handle ptr) {
-			m_fipackfile_unmount = ptr.add(1).rip().as<functions::fipackfile_unmount>();
+			m_fipackfile_unmount       = ptr.add(1).rip().as<functions::fipackfile_unmount>();
 			m_fipackfile_close_archive = ptr.add(0xD).rip().as<functions::fipackfile_close_archive>();
-			m_fipackfile_open_archive = ptr.add(0x34).rip().as<functions::fipackfile_open_archive>();
-			m_fipackfile_mount = ptr.add(0x47).rip().as<functions::fipackfile_mount>();
+			m_fipackfile_open_archive  = ptr.add(0x34).rip().as<functions::fipackfile_open_archive>();
+			m_fipackfile_mount         = ptr.add(0x47).rip().as<functions::fipackfile_mount>();
+		});
+		main_batch.add("fiPackfile stuff", "E8 ? ? ? ? 48 8D 1D ? ? ? ? 48 89 D9 E8 ? ? ? ? 0F B6", -1, -1, eGameBranch::Enhanced, [this](memory::handle ptr) {
+			m_fipackfile_unmount       = ptr.add(1).rip().as<functions::fipackfile_unmount>();
+			m_fipackfile_close_archive = ptr.add(0x10).rip().as<functions::fipackfile_close_archive>();
+			m_fipackfile_open_archive  = ptr.add(0x32).rip().as<functions::fipackfile_open_archive>();
+			m_fipackfile_mount         = ptr.add(0x44).rip().as<functions::fipackfile_mount>();
 		});
 
 		main_batch.add("Gta Thread Vtable", "48 83 A3 ? ? ? 00 00 48 8D 05 ? ? ? ? 48 8B CB 48 89 03 E8", -1, -1, eGameBranch::Legacy, [this](memory::handle ptr) {

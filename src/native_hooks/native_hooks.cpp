@@ -12,6 +12,7 @@
 #include "native_hooks.hpp"
 
 #include "all_scripts.hpp"
+#include "tunables.hpp"
 #include "crossmap.hpp"
 #include "gta_util.hpp"
 #include "invoker.hpp"
@@ -113,9 +114,19 @@ namespace big
 	{
 		add_native_detour(RAGE_JOAAT("shop_controller"), 0x34616828CD07F1A1, all_scripts::RETURN_FALSE); // prevent exploit reports
 
-		for (auto& entry : *g_pointers->m_script_program_table)
-			if (entry.m_program)
-				hook_program(entry.m_program);
+		add_native_detour(RAGE_JOAAT("tuneables_processing"), 0x4EDE34FBADD967A6, tunables::WAIT);
+		add_native_detour(RAGE_JOAAT("tuneables_processing"), 0x0D94071E55F4C9CE, tunables::_NETWORK_GET_TUNABLES_REGISTRATION_INT);
+		add_native_detour(RAGE_JOAAT("tuneables_processing"), 0xB327CF1B8C2C0EA3, tunables::_NETWORK_GET_TUNABLES_REGISTRATION_BOOL);
+		add_native_detour(RAGE_JOAAT("tuneables_processing"), 0x367E5E33E7F0DD1A, tunables::_NETWORK_GET_TUNABLES_REGISTRATION_FLOAT);
+
+		for (int i = 0; i < 176; i++)
+		{
+			rage::scrProgram* program = g_pointers->m_script_programs[i];
+			if (program != nullptr && program->m_code_blocks && program->m_code_size)
+			{
+				hook_program(program);
+			}
+		}
 
 		g_native_hooks = this;
 	}

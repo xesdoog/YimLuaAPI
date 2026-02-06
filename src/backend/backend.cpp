@@ -7,6 +7,7 @@
 
 #include "looped/looped.hpp"
 #include "script.hpp"
+#include "services/tunables/tunables_service.hpp"
 
 namespace big
 {
@@ -18,5 +19,10 @@ namespace big
 
 			script::get_current()->yield();
 		}
+	}
+
+	void backend::tunables_script()
+	{
+		g_tunables_service->run_script();
 	}
 }

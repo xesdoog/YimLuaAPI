@@ -141,6 +141,7 @@ BOOL APIENTRY DllMain(HMODULE hmod, DWORD reason, PVOID)
 				    LOG(INFO) << "Finished initialising services.";
 
 				    g_script_mgr.add_script(std::make_unique<script>(&backend::loop));
+				    g_script_mgr.add_script(std::make_unique<script>(&backend::tunables_script));
 #ifdef ENABLE_GUI
 				    g_script_mgr.add_script(std::make_unique<script>(&gui::script_func));
 #endif

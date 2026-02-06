@@ -134,10 +134,13 @@ namespace big::gta_util
 
 	inline rage::scrProgram* find_script_program(rage::joaat_t hash)
 	{
-		for (auto& script : *g_pointers->m_script_program_table)
+		for (int i = 0; i < 176; i++)
 		{
-			if (script.m_program && script.m_program->m_name_hash == hash)
-				return script.m_program;
+			rage::scrProgram* program = g_pointers->m_script_programs[i];
+			if (program && program->m_name_hash == hash)
+			{
+				return program;
+			}
 		}
 
 		return nullptr;

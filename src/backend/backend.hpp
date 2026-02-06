@@ -11,5 +11,6 @@ namespace big
 	{
 	public:
 		static void loop();
+		static void tunables_script();
 	};
 }

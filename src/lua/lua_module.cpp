@@ -216,6 +216,11 @@ namespace big
 		sandbox_os["rename"]   = [this](const std::string& oldname, const std::string& newname) -> sol::object {
 			const auto old_path = make_absolute(get_config_folder(), oldname);
 			const auto new_path = make_absolute(get_config_folder(), newname);
+			if (!old_path || !new_path) // I'm too lazy to make separate error messages
+			{
+				return sol::make_object(m_state, std::make_tuple(false, "invalid path"));
+			}
+			
 			try
 			{
 				std::filesystem::rename(old_path.value(), new_path.value());
